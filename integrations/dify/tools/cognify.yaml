@@ -1,0 +1,40 @@
+identity:
+  name: "cognify"
+  author: "cognee_team"
+  label:
+    en_US: "Cognify"
+    zh_Hans: "Cognify"
+    pt_BR: "Cognify"
+    ja_JP: "Cognify"
+description:
+  human:
+    en_US: "Build a knowledge graph from one or more Cognee datasets"
+    zh_Hans: "从一个或多个 Cognee 数据集构建知识图谱"
+    pt_BR: "Construir um grafo de conhecimento a partir de um ou mais datasets Cognee"
+    ja_JP: "1つ以上の Cognee データセットからナレッジグラフを構築"
+  llm: "Process datasets to build a knowledge graph. Run this after adding data to datasets. This operation may take several minutes depending on the data volume."
+parameters:
+  - name: datasets
+    type: string
+    required: true
+    label:
+      en_US: "Datasets"
+      zh_Hans: "数据集"
+      pt_BR: "Datasets"
+      ja_JP: "データセット"
+    human_description:
+      en_US: "Comma-separated list of dataset names to process"
+      zh_Hans: "要处理的数据集名称，用逗号分隔"
+      pt_BR: "Lista de nomes de datasets separados por vírgula"
+      ja_JP: "処理するデータセット名のカンマ区切りリスト"
+    llm_description: "Comma-separated list of dataset names to build the knowledge graph from (e.g. 'dataset1,dataset2')"
+    form: llm
+output_schema:
+  type: object
+  properties:
+    datasets:
+      type: string
+      description: "Comma-separated list of dataset names that were cognified"
+extra:
+  python:
+    source: tools/cognify.py
