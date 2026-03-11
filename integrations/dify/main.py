@@ -1,8 +1,8 @@
 import logging
 
-logging.basicConfig(level=logging.INFO)
+from dify_plugin import DifyPluginEnv, Plugin
 
-from dify_plugin import Plugin, DifyPluginEnv
+logging.basicConfig(level=logging.INFO)
 
 plugin = Plugin(DifyPluginEnv(MAX_REQUEST_TIMEOUT=1200))
 
