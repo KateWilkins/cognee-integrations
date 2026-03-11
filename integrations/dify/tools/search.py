@@ -12,27 +12,33 @@ class SearchTool(Tool):
         api_key = self.runtime.credentials["api_key"]
 
         query = tool_parameters["query"]
-        datasets_str = tool_parameters["datasets"]
+        datasets_str = tool_parameters.get("datasets", "")
+        dataset_ids_str = tool_parameters.get("dataset_ids", "")
         search_type = tool_parameters.get("search_type", "GRAPH_COMPLETION")
+        system_prompt = tool_parameters.get("system_prompt", "")
         top_k = tool_parameters.get("top_k", 10)
+        only_context = tool_parameters.get("only_context", "false") == "true"
 
-        datasets = [d.strip() for d in datasets_str.split(",") if d.strip()]
+        datasets = [d.strip() for d in datasets_str.split(",") if d.strip()] if datasets_str else []
+        dataset_ids = [d.strip() for d in dataset_ids_str.split(",") if d.strip()] if dataset_ids_str else []
 
-        if not datasets:
-            error_msg = "At least one dataset name is required"
-            yield self.create_json_message({"error": error_msg})
-            yield self.create_text_message(error_msg)
-            return
+        body: dict[str, Any] = {
+            "searchType": search_type,
+            "query": query,
+            "topK": int(top_k),
+            "onlyContext": only_context,
+        }
+        if datasets:
+            body["datasets"] = datasets
+        if dataset_ids:
+            body["datasetIds"] = dataset_ids
+        if system_prompt:
+            body["systemPrompt"] = system_prompt
 
         try:
             response = httpx.post(
                 f"{base_url}/search",
-                json={
-                    "searchType": search_type,
-                    "datasets": datasets,
-                    "query": query,
-                    "topK": int(top_k),
-                },
+                json=body,
                 headers={
                     "X-Api-Key": api_key,
                     "Content-Type": "application/json",

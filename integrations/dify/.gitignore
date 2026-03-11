@@ -170,6 +170,10 @@ cython_debug/
 # Vscode
 .vscode/
 
+# Dify plugin CLI binary and packages
+dify-plugin
+*.difypkg
+
 # macOS
 .DS_Store
 .AppleDouble

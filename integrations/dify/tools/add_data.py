@@ -11,17 +11,33 @@ class AddDataTool(Tool):
         base_url = self.runtime.credentials["base_url"].rstrip("/")
         api_key = self.runtime.credentials["api_key"]
 
-        dataset_name = tool_parameters["dataset_name"]
+        dataset_name = tool_parameters.get("dataset_name", "")
+        dataset_id = tool_parameters.get("dataset_id", "")
         text_data = tool_parameters["text_data"]
+        node_set = tool_parameters.get("node_set", "")
+
+        if not dataset_name and not dataset_id:
+            error_msg = "Either dataset_name or dataset_id must be provided"
+            yield self.create_json_message({"error": error_msg})
+            yield self.create_text_message(error_msg)
+            return
 
         text_items = [item.strip() for item in text_data.split("\n") if item.strip()]
         if not text_items:
             text_items = [text_data]
 
+        body: dict[str, Any] = {"textData": text_items}
+        if dataset_name:
+            body["datasetName"] = dataset_name
+        if dataset_id:
+            body["datasetId"] = dataset_id
+        if node_set:
+            body["nodeSet"] = [n.strip() for n in node_set.split(",") if n.strip()]
+
         try:
             response = httpx.post(
                 f"{base_url}/add_text",
-                json={"datasetName": dataset_name, "textData": text_items},
+                json=body,
                 headers={
                     "X-Api-Key": api_key,
                     "Content-Type": "application/json",

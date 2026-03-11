@@ -31,7 +31,7 @@ parameters:
     form: llm
   - name: datasets
     type: string
-    required: true
+    required: false
     label:
       en_US: "Datasets"
       zh_Hans: "数据集"
@@ -43,6 +43,21 @@ parameters:
       pt_BR: "Lista de nomes de datasets separados por vírgula"
       ja_JP: "検索するデータセット名のカンマ区切りリスト"
     llm_description: "Comma-separated list of dataset names to search (e.g. 'dataset1,dataset2')"
+    form: llm
+  - name: dataset_ids
+    type: string
+    required: false
+    label:
+      en_US: "Dataset IDs"
+      zh_Hans: "数据集 ID"
+      pt_BR: "IDs dos Datasets"
+      ja_JP: "データセット ID"
+    human_description:
+      en_US: "Comma-separated list of dataset UUIDs to search"
+      zh_Hans: "要搜索的数据集 UUID，用逗号分隔"
+      pt_BR: "Lista de UUIDs de datasets separados por vírgula para pesquisar"
+      ja_JP: "検索するデータセット UUID のカンマ区切りリスト"
+    llm_description: "Comma-separated list of dataset UUIDs to search"
     form: llm
   - name: search_type
     type: select
@@ -79,6 +94,21 @@ parameters:
           zh_Hans: "RAG 补全"
           pt_BR: "Completude RAG"
           ja_JP: "RAG 補完"
+  - name: system_prompt
+    type: string
+    required: false
+    label:
+      en_US: "System Prompt"
+      zh_Hans: "系统提示"
+      pt_BR: "Prompt do Sistema"
+      ja_JP: "システムプロンプト"
+    human_description:
+      en_US: "System prompt for Completion-type searches"
+      zh_Hans: "用于补全类型搜索的系统提示"
+      pt_BR: "Prompt do sistema para pesquisas do tipo Completion"
+      ja_JP: "Completion タイプの検索に使用するシステムプロンプト"
+    llm_description: "Optional system prompt to be used for Completion type searches in Cognee"
+    form: llm
   - name: top_k
     type: number
     required: false
@@ -97,6 +127,29 @@ parameters:
       ja_JP: "返却する最大結果数"
     llm_description: "Maximum number of results to return (default: 10)"
     form: form
+  - name: only_context
+    type: select
+    required: false
+    default: "false"
+    label:
+      en_US: "Only Context"
+      zh_Hans: "仅上下文"
+      pt_BR: "Apenas Contexto"
+      ja_JP: "コンテキストのみ"
+    human_description:
+      en_US: "Return only the raw context instead of LLM-generated completion"
+      zh_Hans: "仅返回原始上下文而非 LLM 生成的补全结果"
+      pt_BR: "Retornar apenas o contexto bruto em vez da completude gerada pelo LLM"
+      ja_JP: "LLM による補完ではなく生のコンテキストのみを返す"
+    llm_description: "Set to true to return only the raw context Cognee sends to the LLM, instead of the LLM completion response"
+    form: form
+    options:
+      - value: "false"
+        label:
+          en_US: "False"
+      - value: "true"
+        label:
+          en_US: "True"
 output_schema:
   type: object
   properties:
