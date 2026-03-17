@@ -183,9 +183,9 @@ This lets the agent distinguish between personal context, shared knowledge, and 
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `searchType` | string | `FEELING_LUCKY` | Search strategy (see below) |
-| `maxResults` | number | `6` | Max memories to inject per scope |
-| `minScore` | number | `0` | Minimum relevance score filter |
+| `searchType` | string | `CHUNKS` | Search strategy (see below) |
+| `maxResults` | number | `3` | Max memories to inject per scope |
+| `minScore` | number | `0.5` | Minimum relevance score filter |
 | `maxTokens` | number | `512` | Token cap for recall context per scope |
 | `searchPrompt` | string | `""` | System prompt to guide search |
 
@@ -193,7 +193,8 @@ This lets the agent distinguish between personal context, shared knowledge, and 
 
 | Type | Description |
 |------|-------------|
-| `FEELING_LUCKY` | **Default** — auto-selects the best strategy per query |
+| `CHUNKS` | **Default** — semantic vector search, returns raw stored text |
+| `FEELING_LUCKY` | Auto-selects a strategy per query (may pick generative modes) |
 | `GRAPH_COMPLETION` | Graph traversal + LLM reasoning |
 | `GRAPH_COMPLETION_COT` | Chain-of-thought reasoning over graph (iterative) |
 | `GRAPH_COMPLETION_CONTEXT_EXTENSION` | Extended context retrieval (multiple rounds) |

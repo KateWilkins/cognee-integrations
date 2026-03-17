@@ -6,10 +6,10 @@ import type { CogneePluginConfig, CogneeSearchType, MemoryScope, ScopeRoute } fr
 
 export const DEFAULT_BASE_URL = "http://localhost:8000";
 export const DEFAULT_DATASET_NAME = "openclaw";
-export const DEFAULT_SEARCH_TYPE: CogneeSearchType = "FEELING_LUCKY";
+export const DEFAULT_SEARCH_TYPE: CogneeSearchType = "CHUNKS";
 export const DEFAULT_DELETE_MODE = "soft" as const;
-export const DEFAULT_MAX_RESULTS = 6;
-export const DEFAULT_MIN_SCORE = 0;
+export const DEFAULT_MAX_RESULTS = 3;
+export const DEFAULT_MIN_SCORE = 0.5;
 export const DEFAULT_MAX_TOKENS = 512;
 export const DEFAULT_AUTO_RECALL = true;
 export const DEFAULT_AUTO_INDEX = true;
