@@ -5,6 +5,7 @@ import { MEMORY_SCOPES } from "./types.js";
 import { CogneeHttpClient } from "./client.js";
 import { resolveConfig } from "./config.js";
 import { collectMemoryFiles } from "./files.js";
+import { buildMemoryFlushPlan } from "./flush-plan.js";
 import {
   loadDatasetState,
   loadScopedSyncIndexes,
@@ -20,6 +21,9 @@ import { syncFiles, syncFilesScoped } from "./sync.js";
 // Plugin registration
 // ---------------------------------------------------------------------------
 
+type MemoryFlushPlanRegistrant = OpenClawPluginApi & {
+  registerMemoryFlushPlan?: (resolver: typeof buildMemoryFlushPlan) => void;
+};
 const memoryCogneePlugin = {
   id: "cognee-openclaw",
   name: "Memory (Cognee)",
@@ -29,6 +33,9 @@ const memoryCogneePlugin = {
     const cfg = resolveConfig(api.pluginConfig);
     const client = new CogneeHttpClient(cfg.baseUrl, cfg.apiKey, cfg.username, cfg.password, cfg.requestTimeoutMs, cfg.ingestionTimeoutMs, cfg.mode);
     const multiScope = isMultiScopeEnabled(cfg);
+
+    (api as MemoryFlushPlanRegistrant).registerMemoryFlushPlan?.(buildMemoryFlushPlan);
+    api.logger.debug?.("cognee-openclaw: registered memory flush plan");
 
     // Legacy single-scope state
     let datasetId: string | undefined;
@@ -41,6 +48,8 @@ const memoryCogneePlugin = {
     let sessionId: string | undefined;
 
     let resolvedWorkspaceDir: string | undefined;
+    let resolveServiceReady: () => void;
+    const serviceReady = new Promise<void>((r) => { resolveServiceReady = r; });
 
     // Load persisted state on startup
     const stateReady = Promise.all([
@@ -297,6 +306,7 @@ const memoryCogneePlugin = {
         id: "cognee-auto-sync",
         async start(ctx) {
           resolvedWorkspaceDir = ctx.workspaceDir || process.cwd();
+          resolveServiceReady!();
 
           try {
             await client.health();
@@ -448,9 +458,9 @@ const memoryCogneePlugin = {
     if (cfg.autoIndex) {
       api.on("agent_end", async (event, ctx) => {
         if (!event.success) return;
-        await stateReady;
+        await Promise.all([stateReady, serviceReady]);
 
-        const workspaceDir = resolvedWorkspaceDir || process.cwd();
+        const workspaceDir = resolvedWorkspaceDir!;
 
         // Fix #4: Actually persist the session into the knowledge graph
         if (cfg.enableSessions && cfg.persistSessionsAfterEnd && sessionId) {
