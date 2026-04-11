@@ -35,9 +35,7 @@ class CreateDatasetTool(Tool):
             yield self.create_json_message(result)
             yield self.create_variable_message("dataset_id", dataset_id)
             yield self.create_variable_message("dataset_name", dataset_name)
-            yield self.create_text_message(
-                f"Dataset '{dataset_name}' ready (id: {dataset_id})."
-            )
+            yield self.create_text_message(f"Dataset '{dataset_name}' ready (id: {dataset_id}).")
         except httpx.HTTPStatusError as e:
             error_msg = f"Cognee API error {e.response.status_code}: {e.response.text}"
             yield self.create_json_message({"error": error_msg})
